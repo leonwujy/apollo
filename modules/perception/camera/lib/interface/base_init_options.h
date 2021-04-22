@@ -22,8 +22,8 @@ namespace perception {
 namespace camera {
 
 struct BaseInitOptions {
-  std::string root_dir;
-  std::string conf_file;
+  std::string root_dir;   //根目录
+  std::string conf_file;  //配置文件
   int gpu_id = 0;
   bool use_cyber_work_root = false;
 };

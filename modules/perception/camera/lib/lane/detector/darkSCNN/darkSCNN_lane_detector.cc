@@ -31,6 +31,7 @@ namespace camera {
 using apollo::cyber::common::GetAbsolutePath;
 using apollo::cyber::common::GetProtoFromFile;
 
+// 初始化函数
 bool DarkSCNNLaneDetector::Init(const LaneDetectorInitOptions &options) {
   std::string proto_path = GetAbsolutePath(options.root_dir, options.conf_file);
   if (!GetProtoFromFile(proto_path, &darkscnn_param_)) {
@@ -41,6 +42,7 @@ bool DarkSCNNLaneDetector::Init(const LaneDetectorInitOptions &options) {
   google::protobuf::TextFormat::PrintToString(darkscnn_param_, &param_str);
   AINFO << "darkSCNN param: " << param_str;
 
+  //载入dark-SCNN模型信息
   const auto model_param = darkscnn_param_.model_param();
   std::string model_root =
       GetAbsolutePath(options.root_dir, model_param.model_name());
@@ -52,6 +54,7 @@ bool DarkSCNNLaneDetector::Init(const LaneDetectorInitOptions &options) {
   AINFO << " weight_file: " << weight_file;
   AINFO << " model_root: " << model_root;
 
+  //设定相机模型
   base_camera_model_ = options.base_camera_model;
   if (base_camera_model_ == nullptr) {
     AERROR << "options.intrinsic is nullptr!";
@@ -68,6 +71,7 @@ bool DarkSCNNLaneDetector::Init(const LaneDetectorInitOptions &options) {
   AINFO << "input_width: " << input_width_;
 
   // compute image provider parameters
+  // 计算图像数据源参数
   input_offset_y_ = static_cast<uint16_t>(model_param.input_offset_y());
   input_offset_x_ = static_cast<uint16_t>(model_param.input_offset_x());
   resize_height_ = static_cast<uint16_t>(model_param.resize_height());
@@ -97,10 +101,12 @@ bool DarkSCNNLaneDetector::Init(const LaneDetectorInitOptions &options) {
   data_provider_image_option_.crop_roi.height = crop_height_;
   data_provider_image_option_.crop_roi.width = crop_width_;
 
+  //设置GPU设备
   cudaDeviceProp prop;
   cudaGetDeviceProperties(&prop, options.gpu_id);
   AINFO << "GPU: " << prop.name;
 
+  //载入网络结构
   const auto net_param = darkscnn_param_.net_param();
   net_inputs_.push_back(net_param.input_blob());
   net_outputs_.push_back(net_param.seg_blob());
@@ -117,6 +123,7 @@ bool DarkSCNNLaneDetector::Init(const LaneDetectorInitOptions &options) {
   }
 
   // initialize caffe net
+  // 初始化caffe网络
   const auto &model_type = model_param.model_type();
   AINFO << "model_type: " << model_type;
   cnnadapter_lane_.reset(
@@ -165,6 +172,7 @@ bool DarkSCNNLaneDetector::Init(const LaneDetectorInitOptions &options) {
   return true;
 }
 
+//执行车道线检测
 bool DarkSCNNLaneDetector::Detect(const LaneDetectorOptions &options,
                                   CameraFrame *frame) {
   if (frame == nullptr) {
@@ -174,6 +182,7 @@ bool DarkSCNNLaneDetector::Detect(const LaneDetectorOptions &options,
 
   auto start = std::chrono::high_resolution_clock::now();
   auto data_provider = frame->data_provider;
+  //校对尺寸信息是否正确
   if (input_width_ != data_provider->src_width()) {
     AERROR << "Input size is not correct: " << input_width_ << " vs "
            << data_provider->src_width();
@@ -186,6 +195,7 @@ bool DarkSCNNLaneDetector::Detect(const LaneDetectorOptions &options,
   }
 
   // use data provider to crop input image
+  // 使用数据提供器来裁剪输入图像
   if (!data_provider->GetImage(data_provider_image_option_, &image_src_)) {
     return false;
   }
@@ -224,6 +234,7 @@ bool DarkSCNNLaneDetector::Detect(const LaneDetectorOptions &options,
   time_1 += microseconds_1;
 
   // convert network output to color map
+  // 将网络输出转换为彩色图
   const auto seg_blob = cnnadapter_lane_->get_blob(net_outputs_[0]);
   ADEBUG << "seg_blob: " << seg_blob->shape_string();
   std::vector<cv::Mat> masks;
@@ -258,6 +269,7 @@ bool DarkSCNNLaneDetector::Detect(const LaneDetectorOptions &options,
   frame->lane_detected_blob = lane_blob_;
 
   // retrieve vanishing point network output
+  // 从网络输出中获得消失点
   if (net_outputs_.size() > 1) {
     const auto vpt_blob = cnnadapter_lane_->get_blob(net_outputs_[1]);
     ADEBUG << "vpt_blob: " << vpt_blob->shape_string();

@@ -31,6 +31,7 @@ namespace apollo {
 namespace perception {
 namespace camera {
 
+// 车道线后处理评估
 int lane_postprocessor_eval() {
   //  initialize lane detector
   LaneDetectorInitOptions init_options;

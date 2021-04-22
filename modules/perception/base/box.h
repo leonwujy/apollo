@@ -120,6 +120,7 @@ struct Rect {
   T height = 0;
 };
 
+// 2D框的模板结构
 template <typename T>
 struct BBox2D {
   BBox2D() : xmin(0), ymin(0), xmax(0), ymax(0) {}
@@ -127,6 +128,7 @@ struct BBox2D {
   BBox2D(const T &xmin_in, const T &ymin_in, const T &xmax_in, const T &ymax_in)
       : xmin(xmin_in), ymin(ymin_in), xmax(xmax_in), ymax(ymax_in) {}
 
+  //初始化函数（explicit拒绝隐式的赋值转换初始化）
   explicit BBox2D(const Rect<T> &rect) {
     this->xmin = rect.x;
     this->ymin = rect.y;
@@ -134,6 +136,7 @@ struct BBox2D {
     this->ymax = rect.y + rect.height;
   }
 
+  //自行明确定义等号操作
   BBox2D<T> &operator=(const Rect<T> &rect) {
     this->xmin = rect.x;
     this->ymin = rect.y;
@@ -142,6 +145,7 @@ struct BBox2D {
     return *this;
   }
 
+  //计算中心点
   Point2D<T> Center() const {
     Point2D<T> p;
     p.x = this->xmin + (this->xmax - this->xmin) / 2;
@@ -149,6 +153,7 @@ struct BBox2D {
     return p;
   }
 
+  //计算面积
   T Area() const { return (xmax - xmin) * (ymax - ymin); }
   T xmin = 0;  // top-left
   T ymin = 0;  // top-left
@@ -156,6 +161,7 @@ struct BBox2D {
   T ymax = 0;  // bottom-right
 };
 
+// 中间层类型定义，使项目与opencv的Rect类型绑定减弱
 typedef Rect<int> RectI;
 typedef Rect<float> RectF;
 typedef Rect<double> RectD;

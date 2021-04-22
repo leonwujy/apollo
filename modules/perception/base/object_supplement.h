@@ -31,10 +31,11 @@ namespace apollo {
 namespace perception {
 namespace base {
 
+// 激光雷达目标补充信息
 struct alignas(16) LidarObjectSupplement {
   void Reset() {
-    is_orientation_ready = false;
-    on_use = false;
+    is_orientation_ready = false;   //方向判断就绪？
+    on_use = false; //使用中
     cloud.clear();
     cloud_world.clear();
     is_fp = false;
@@ -47,27 +48,38 @@ struct alignas(16) LidarObjectSupplement {
     raw_classification_methods.clear();
   }
   // @brief orientation estimateed indicator
+  // 方向估计指标
   bool is_orientation_ready = false;
   // @brief valid only for on_use = true
+  // 可用性标识
   bool on_use = false;
   // @brief cloud of the object in lidar coordinates
+  // 物体在激光雷达坐标系中的点云
   base::AttributePointCloud<PointF> cloud;
   // @brief cloud of the object in world coordinates
+  // 物体在世界坐标系中的点云
   base::AttributePointCloud<PointD> cloud_world;
   // @brief background indicator
+  // 是否为背景
   bool is_background = false;
   // @brief false positive indicator
+  // 是否为假正例
   bool is_fp = false;
   // @brief false positive probability
+  // 假正例的概率
   float fp_prob = 0.f;
   // @brief whether this object is in roi
+  // 这个目标是否在ROI范围内
   bool is_in_roi = false;
   // @brief number of cloud points in roi
+  // 在ROI内的点云数量
   size_t num_points_in_roi = 0;
   // @brief object height above ground
+  // 物体相对地面的高度
   float height_above_ground = std::numeric_limits<float>::max();
 
   // @brief raw probability of each classification method
+  // 每种物体分类的原始概率
   std::vector<std::vector<float>> raw_probs;
   std::vector<std::string> raw_classification_methods;
 };
@@ -75,6 +87,7 @@ typedef std::shared_ptr<LidarObjectSupplement> LidarObjectSupplementPtr;
 typedef std::shared_ptr<const LidarObjectSupplement>
     LidarObjectSupplementConstPtr;
 
+//毫米波雷达目标补充信息
 struct alignas(16) RadarObjectSupplement {
   void Reset() {
     on_use = false;
@@ -85,22 +98,25 @@ struct alignas(16) RadarObjectSupplement {
     radial_velocity = 0.0f;
   }
   // @brief valid only for on_use = true
+  // 是否启用
   bool on_use = false;
   /* @brief (range, angle) in radar polar coordinate system
      x for forward and y for left
   */
+ // 物体在极坐标系中的位置
   float range = 0.0f;
   float angle = 0.0f;
 
-  float relative_radial_velocity = 0.0f;
-  float relative_tangential_velocity = 0.0f;
-  float radial_velocity = 0.0f;
+  float relative_radial_velocity = 0.0f;       //相对径向速度
+  float relative_tangential_velocity = 0.0f;   //相对切向速度
+  float radial_velocity = 0.0f;                //径向速度
 };
 
 typedef std::shared_ptr<RadarObjectSupplement> RadarObjectSupplementPtr;
 typedef std::shared_ptr<const RadarObjectSupplement>
     RadarObjectSupplementConstPtr;
 
+// 摄像头的目标补充信息
 struct alignas(16) CameraObjectSupplement {
   CameraObjectSupplement() { Reset(); }
 
@@ -131,35 +147,44 @@ struct alignas(16) CameraObjectSupplement {
   bool on_use = false;
 
   // @brief camera sensor name
+  //传感器名称
   std::string sensor_name;
 
   // @brief  2d box
+  // 2D目标框
   BBox2D<float> box;
 
   // @brief projected 2d box
+  // 投影到世界中的2D目标框？
   BBox2D<float> projected_box;
 
   // @brief local track id
   int local_track_id = -1;
 
   // @brief 2Dto3D, pts8.resize(16), x, y...
+  // 转换为3D盒子后的8个顶点
   std::vector<float> pts8;
 
   // @brief front box
+  // 目标前方2D box
   BBox2D<float> front_box;
 
   // @brief back box
+  // 目标后方2D box
   BBox2D<float> back_box;
   std::vector<float> object_feature;
 
   // @brief alpha angle from KITTI: Observation angle of object, in [-pi..pi]
+  // 物体观察角度
   double alpha = 0.0;
-  double truncated_horizontal = 0.0;
-  double truncated_vertical = 0.0;
+  double truncated_horizontal = 0.0;  //截断水平角
+  double truncated_vertical = 0.0;    //截断垂直角
   // @brief center in camera coordinate system
+  // 在相机坐标系中的物体中点
   Eigen::Vector3f local_center = Eigen::Vector3f(0.0f, 0.0f, 0.0f);
 
   // @brief visual object type, only used in camera module
+  // 视觉目标类型
   VisualObjectType visual_type = VisualObjectType::MAX_OBJECT_TYPE;
   std::vector<float> visual_type_probs;
 
@@ -176,9 +201,11 @@ struct alignas(16) CameraObjectSupplement {
   //----------------------------------------------------------------
   int area_id;
   // @brief visible ratios
+  // 可见率
   float visible_ratios[4];
   // @brief cut off ratios on width, length (3D)
   //        cut off ratios on left, right (2D)
+  // cut off? 比例
   float cut_off_ratios[4];
 };
 typedef std::shared_ptr<CameraObjectSupplement> CameraObjectSupplementPtr;
@@ -221,6 +248,7 @@ typedef boost::circular_buffer<Vehicle3DStatus> Motion3DBuffer;
 typedef std::shared_ptr<Motion3DBuffer> Motion3DBufferPtr;
 typedef std::shared_ptr<const Motion3DBuffer> Motion3DBufferConstPtr;
 
+// 传感器目标测量
 struct SensorObjectMeasurement {
   void Reset() {
     sensor_id = "unknonw_sensor";
@@ -246,6 +274,7 @@ struct SensorObjectMeasurement {
   BBox2D<float> box;
 };
 
+//融合目标补充信息
 struct alignas(16) FusionObjectSupplement {
   FusionObjectSupplement() { measurements.reserve(5); }
   void Reset() {

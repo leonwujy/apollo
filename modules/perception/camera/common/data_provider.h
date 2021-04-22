@@ -27,8 +27,10 @@ namespace apollo {
 namespace perception {
 namespace camera {
 
+//数据提供者
 class DataProvider {
  public:
+  //初始化参数
   struct InitOptions {
     InitOptions()
         : image_height(0),
@@ -39,10 +41,11 @@ class DataProvider {
     int image_height;
     int image_width;
     int device_id;
-    bool do_undistortion;
+    bool do_undistortion; //是否进行去畸变？
     std::string sensor_name;
   };
 
+  //图像设置
   struct ImageOptions {
     ImageOptions() {
       this->target_color = base::Color::NONE;
@@ -51,10 +54,11 @@ class DataProvider {
 
     ImageOptions(base::Color target_color, bool do_crop, base::RectI crop_roi) {
       this->target_color = target_color;
-      this->do_crop = do_crop;
-      this->crop_roi = crop_roi;
+      this->do_crop = do_crop;   //是否进行裁剪
+      this->crop_roi = crop_roi; //裁剪的区域
     }
 
+    //转换为字符串信息描述
     std::string ToString() {
       std::stringstream ss;
       ss << " " << static_cast<int>(target_color);
@@ -74,15 +78,17 @@ class DataProvider {
   DataProvider() = default;
   ~DataProvider() = default;
 
-  DataProvider(const DataProvider &) = delete;
-  DataProvider &operator=(const DataProvider &) = delete;
+  DataProvider(const DataProvider &) = delete;            //禁用拷贝构造
+  DataProvider &operator=(const DataProvider &) = delete; //禁用赋值复制
 
+  //初始化数据提供者模块
   bool Init(const InitOptions &options = InitOptions());
 
   // @brief: fill raw image data.
   // @param [in]: options
   // @param [in/out]: blob
   // image blob with specified size should be filled, required.
+  //填充图像数据
   bool FillImageData(int rows, int cols, const uint8_t *data,
                      const std::string &encoding);
 
@@ -98,18 +104,21 @@ class DataProvider {
   // @param [in]: options
   // @param [in/out]: NHWC blob (4D)
   // image blob with specified size should be filled, required.
+  //获取图像数据包裹，有原生信息转换而来
   bool GetImageBlob(const ImageOptions &options, base::Blob<uint8_t> *blob);
 
   // @brief: get Image8U converted from raw message.
   // @param [in]: options
   // @return: Image8U
   // image blob with specified size should be filled, required.
+  //获取图像u8数据，由原生信息转换而来
   bool GetImage(const ImageOptions &options, base::Image8U *image);
 
   int src_height() const { return src_height_; }
   int src_width() const { return src_width_; }
   const std::string &sensor_name() const { return sensor_name_; }
 
+  //图像转换
   bool to_gray_image();
   bool to_rgb_image();
   bool to_bgr_image();

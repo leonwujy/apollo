@@ -43,6 +43,7 @@ namespace apollo {
 namespace perception {
 namespace camera {
 
+//不同类别物体的颜色定义
 static const cv::Scalar kBoxColorMap[] = {
     cv::Scalar(0, 0, 0),        // 0
     cv::Scalar(128, 128, 128),  // 1
@@ -55,6 +56,7 @@ static const cv::Scalar kBoxColorMap[] = {
     cv::Scalar(255, 255, 255),  // 8
 };
 
+//物体不同朝向的颜色定义
 static const cv::Scalar kFaceColorMap[] = {
     cv::Scalar(255, 255, 255),  // 0
     cv::Scalar(255, 0, 0),      // 1
@@ -62,6 +64,7 @@ static const cv::Scalar kFaceColorMap[] = {
     cv::Scalar(0, 0, 255),      // 3
 };
 
+//获得目标子类型
 base::ObjectSubType GetObjectSubType(const std::string &type_name) {
   if (type_name == "car") {
     return base::ObjectSubType::CAR;
@@ -87,6 +90,7 @@ base::ObjectSubType GetObjectSubType(const std::string &type_name) {
   }
 }
 
+//从Kitti格式中读取目标
 bool LoadFromKitti(const std::string &kitti_path, CameraFrame *frame) {
   frame->detected_objects.clear();
   FILE *fp = fopen(kitti_path.c_str(), "r");
@@ -149,6 +153,7 @@ int main() {
     frame.track_feature_blob.reset(new base::Blob<float>());
   }
 
+  //初始化数据获取设备
   DataProvider::InitOptions dp_init_options;
   dp_init_options.sensor_name = "front_6mm";
 
@@ -160,10 +165,12 @@ int main() {
   ACHECK(frame.data_provider->Init(dp_init_options));
   AINFO << "Done!";
 
+  //障碍物检测器初始化
   ObstacleDetectorInitOptions init_options;
   init_options.root_dir = FLAGS_detector_root;
   init_options.conf_file = FLAGS_detector_conf;
 
+  //初始化相机内参
   base::BrownCameraDistortionModel model;
   common::LoadBrownCameraIntrinsic("params/front_6mm_intrinsics.yaml", &model);
   init_options.base_camera_model = model.get_camera_model();

@@ -25,6 +25,7 @@ namespace apollo {
 namespace perception {
 namespace camera {
 
+//在线标定服务
 bool OnlineCalibrationService::Init(
     const CalibrationServiceInitOptions &options) {
   master_sensor_name_ = options.calibrator_working_sensor_name;

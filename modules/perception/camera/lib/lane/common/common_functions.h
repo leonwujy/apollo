@@ -231,8 +231,10 @@ class DisjointSet {
   int subset_num_;
 };
 
+//连通分支
 class ConnectedComponent {
  public:
+  //初始化
   ConnectedComponent() : pixel_count_(0) {}
 
   ConnectedComponent(int x, int y) : pixel_count_(1) {
@@ -249,10 +251,10 @@ class ConnectedComponent {
   ~ConnectedComponent() {}
 
   // CC pixels
-  void AddPixel(int x, int y);
-  int GetPixelCount() const { return pixel_count_; }
-  base::BBox2DI GetBBox() const { return bbox_; }
-  std::vector<base::Point2DI> GetPixels() const { return pixels_; }
+  void AddPixel(int x, int y); //添加像素点
+  int GetPixelCount() const { return pixel_count_; } //获得像素数量
+  base::BBox2DI GetBBox() const { return bbox_; } //获取边界框
+  std::vector<base::Point2DI> GetPixels() const { return pixels_; } //获取所有像素点集合
 
  private:
   int pixel_count_;

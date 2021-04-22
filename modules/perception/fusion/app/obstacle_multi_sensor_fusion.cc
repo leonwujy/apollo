@@ -19,6 +19,7 @@ namespace apollo {
 namespace perception {
 namespace fusion {
 
+//初始化对象
 bool ObstacleMultiSensorFusion::Init(
     const ObstacleMultiSensorFusionParam& param) {
   if (fusion_ != nullptr) {
@@ -36,6 +37,7 @@ bool ObstacleMultiSensorFusion::Init(
   return true;
 }
 
+//执行融合
 bool ObstacleMultiSensorFusion::Process(const base::FrameConstPtr& frame,
                                         std::vector<base::ObjectPtr>* objects) {
   FusionOptions options;

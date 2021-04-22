@@ -19,14 +19,16 @@ namespace apollo {
 namespace perception {
 namespace base {
 
+// 目标车灯的置信度信息（先检测到灯，再判断灯的状态？）
 struct CarLight {
-  float brake_visible = 0.0f;
-  float brake_switch_on = 0.0f;
-  float left_turn_visible = 0.0f;
-  float left_turn_switch_on = 0.0f;
-  float right_turn_visible = 0.0f;
-  float right_turn_switch_on = 0.0f;
+  float brake_visible = 0.0f;          //刹车灯可见度
+  float brake_switch_on = 0.0f;        //刹车灯开启度
+  float left_turn_visible = 0.0f;      //左转灯可见度
+  float left_turn_switch_on = 0.0f;    //左转灯开启度
+  float right_turn_visible = 0.0f;     //右转灯可见度
+  float right_turn_switch_on = 0.0f;   //右转灯开启度
 
+  //重置所有信息
   void Reset() {
     brake_visible = 0;
     brake_switch_on = 0;

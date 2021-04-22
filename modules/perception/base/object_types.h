@@ -25,11 +25,11 @@ namespace base {
 // @brief general object type
 enum class ObjectType {
   UNKNOWN = 0,
-  UNKNOWN_MOVABLE = 1,
-  UNKNOWN_UNMOVABLE = 2,
-  PEDESTRIAN = 3,
-  BICYCLE = 4,
-  VEHICLE = 5,
+  UNKNOWN_MOVABLE = 1,    //可移动物体
+  UNKNOWN_UNMOVABLE = 2,  //不可移动物体
+  PEDESTRIAN = 3,         //行人
+  BICYCLE = 4,            //自行车
+  VEHICLE = 5,            //汽车
   MAX_OBJECT_TYPE = 6,
 };
 
@@ -60,27 +60,29 @@ enum class VisualObjectType {
 };
 
 // @brief fine-grained object types
+// 细粒度物体类型
 enum class ObjectSubType {
   UNKNOWN = 0,
-  UNKNOWN_MOVABLE = 1,
-  UNKNOWN_UNMOVABLE = 2,
-  CAR = 3,
-  VAN = 4,
-  TRUCK = 5,
-  BUS = 6,
-  CYCLIST = 7,
-  MOTORCYCLIST = 8,
-  TRICYCLIST = 9,
-  PEDESTRIAN = 10,
-  TRAFFICCONE = 11,
+  UNKNOWN_MOVABLE = 1,     //未知的可移动物体
+  UNKNOWN_UNMOVABLE = 2,   //未知的不可移动物体
+  CAR = 3,      //小轿车
+  VAN = 4,      //厢式货车
+  TRUCK = 5,    //卡车
+  BUS = 6,      //公交
+  CYCLIST = 7,  //自行车
+  MOTORCYCLIST = 8,  //摩托车
+  TRICYCLIST = 9,    //三轮车
+  PEDESTRIAN = 10,   //行人
+  TRAFFICCONE = 11,  //交通锥标，三角锥
   MAX_OBJECT_TYPE = 12,
 };
 
 // @brief motion state
+// 运动状态
 enum class MotionState {
-  UNKNOWN = 0,
-  MOVING = 1,
-  STATIONARY = 2,
+  UNKNOWN = 0,    //未知
+  MOVING = 1,     //运动
+  STATIONARY = 2, //静止
 };
 
 /**

@@ -47,21 +47,23 @@ namespace apollo {
 namespace perception {
 namespace camera {
 // draw detected lane point_set
+// 绘制检测到的车道线点集
 void show_detect_point_set(
     const cv::Mat& image,
     const std::vector<std::vector<LanePointInfo>>& detect_laneline_point_set,
     const std::string& save_path);
 
+// 绘制推断的车道线点集
 void show_all_infer_point_set(const cv::Mat& image,
                               const std::vector<LanePointInfo>& infer_point_set,
                               const std::string& save_path);
 
-//
+//显示车道线
 void show_lane_lines(const cv::Mat& image,
                      const std::vector<base::LaneLine>& lane_marks,
                      const std::string& save_path);
 
-//
+//显示车道线？
 void show_lane_ccs(const std::vector<unsigned char>& lane_map,
                    const int lane_map_width, const int lane_map_height,
                    const std::vector<ConnectedComponent>& lane_ccs,
@@ -69,9 +71,11 @@ void show_lane_ccs(const std::vector<unsigned char>& lane_map,
                    const std::string& save_path);
 //
 //  save the lane line and points to json format
+// 保存车道线和点集到json文件中
 void output_laneline_to_json(const std::vector<base::LaneLine>& lane_objects,
                              const std::string& save_path);
 
+// 保存车道线和点集到txt文件中
 void output_laneline_to_txt(const std::vector<base::LaneLine>& lane_objects,
                             const std::string& save_path);
 }  // namespace camera

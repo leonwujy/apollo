@@ -74,6 +74,7 @@ T GetPolyValue(T a, T b, T c, T d, T x) {
   return y;
 }
 
+// 初始化车道线后处理模块
 bool DarkSCNNLanePostprocessor::Init(
     const LanePostprocessorInitOptions& options) {
   // Read detector config parameter
@@ -116,6 +117,7 @@ bool DarkSCNNLanePostprocessor::Init(
   return true;
 }
 
+//处理流程
 bool DarkSCNNLanePostprocessor::Process2D(
     const LanePostprocessorOptions& options, CameraFrame* frame) {
   ADEBUG << "Begin to Process2D.";
@@ -132,11 +134,12 @@ bool DarkSCNNLanePostprocessor::Process2D(
   // }
 
   // 1. Sample points on lane_map and project them onto world coordinate
+  // 在车道线图中采样部分的点，并将它们投射到世界坐标系中
 
   // TODO(techoe): Should be fixed
-  int y = static_cast<int>(lane_map.rows * 0.9 - 1);
+  int y = static_cast<int>(lane_map.rows * 0.9 - 1); // 行数起点
   // TODO(techoe): Should be fixed
-  int step_y = (y - 40) * (y - 40) / 6400 + 1;
+  int step_y = (y - 40) * (y - 40) / 6400 + 1;      //行的步长
 
   xy_points.clear();
   xy_points.resize(lane_type_num_);
@@ -163,6 +166,7 @@ bool DarkSCNNLanePostprocessor::Process2D(
           xy_point << xy_p(0) / xy_p(2), xy_p(1) / xy_p(2);
 
           // Filter out lane line points
+          // 过滤出车道线的点
           if (xy_point(0) < 0.0 ||  // This condition is only for front camera
               xy_point(0) > max_longitudinal_distance_ ||
               std::abs(xy_point(1)) > 30.0) {
@@ -218,6 +222,7 @@ bool DarkSCNNLanePostprocessor::Process2D(
   time_1 += microseconds_1;
 
   // 2. Remove outliers and Do a ransac fitting
+  // 剔除离群点，并使用ransac拟合
   std::vector<Eigen::Matrix<float, 4, 1>> coeffs;
   std::vector<Eigen::Matrix<float, 4, 1>> img_coeffs;
   std::vector<Eigen::Matrix<float, 2, 1>> selected_xy_points;
@@ -245,6 +250,7 @@ bool DarkSCNNLanePostprocessor::Process2D(
   time_2 += microseconds_2 - microseconds_1;
 
   // 3. Write values into lane_objects
+  // 将数值写入车道线目标
   std::vector<float> c0s(lane_type_num_, 0);
   for (int i = 1; i < lane_type_num_; ++i) {
     if (xy_points[i].size() < minNumPoints_) continue;
@@ -359,6 +365,7 @@ bool DarkSCNNLanePostprocessor::Process2D(
 
   // Special case riding on a lane:
   // 0: no center lane, 1: center lane as left, 2: center lane as right
+  // 骑线行驶的特殊情况
   int has_center_ = 0;
   for (auto lane_ : frame->lane_objects) {
     if (lane_.pos_type == base::LaneLinePositionType::EGO_CENTER) {
@@ -404,6 +411,7 @@ bool DarkSCNNLanePostprocessor::Process2D(
 }
 
 // Produce laneline output in camera coordinates (optional)
+// 产生在相机坐标系中的车道线输出
 bool DarkSCNNLanePostprocessor::Process3D(
     const LanePostprocessorOptions& options, CameraFrame* frame) {
   ConvertImagePoint2Camera(frame);
@@ -411,19 +419,20 @@ bool DarkSCNNLanePostprocessor::Process3D(
   return true;
 }
 
+// 将图像坐标系中的点转换为相机坐标系
 void DarkSCNNLanePostprocessor::ConvertImagePoint2Camera(CameraFrame* frame) {
-  float pitch_angle = frame->calibration_service->QueryPitchAngle();
+  float pitch_angle = frame->calibration_service->QueryPitchAngle(); //获取俯仰角
   float camera_ground_height =
-      frame->calibration_service->QueryCameraToGroundHeight();
-  const Eigen::Matrix3f& intrinsic_params = frame->camera_k_matrix;
-  const Eigen::Matrix3f& intrinsic_params_inverse = intrinsic_params.inverse();
-  std::vector<base::LaneLine>& lane_objects = frame->lane_objects;
-  int laneline_num = static_cast<int>(lane_objects.size());
+      frame->calibration_service->QueryCameraToGroundHeight(); //获取相机对地高度
+  const Eigen::Matrix3f& intrinsic_params = frame->camera_k_matrix; //获取内参
+  const Eigen::Matrix3f& intrinsic_params_inverse = intrinsic_params.inverse(); //内参转置
+  std::vector<base::LaneLine>& lane_objects = frame->lane_objects; //车道线目标
+  int laneline_num = static_cast<int>(lane_objects.size()); //车道线数量
   for (int line_index = 0; line_index < laneline_num; ++line_index) {
     std::vector<base::Point2DF>& image_point_set =
-        lane_objects[line_index].curve_image_point_set;
+        lane_objects[line_index].curve_image_point_set;  //图像中的点集
     std::vector<base::Point3DF>& camera_point_set =
-        lane_objects[line_index].curve_camera_point_set;
+        lane_objects[line_index].curve_camera_point_set; //相机坐标系中的点集
     for (int i = 0; i < static_cast<int>(image_point_set.size()); i++) {
       base::Point3DF camera_point;
       Eigen::Vector3d camera_point3d;
@@ -433,12 +442,13 @@ void DarkSCNNLanePostprocessor::ConvertImagePoint2Camera(CameraFrame* frame) {
       camera_point.x = static_cast<float>(camera_point3d(0));
       camera_point.y = static_cast<float>(camera_point3d(1));
       camera_point.z = static_cast<float>(camera_point3d(2));
-      camera_point_set.push_back(camera_point);
+      camera_point_set.push_back(camera_point); //输出相机坐标系下的3D点
     }
   }
 }
 
 // @brief: Fit camera lane line using polynomial
+// 用多边形拟合相机车道线
 void DarkSCNNLanePostprocessor::PolyFitCameraLaneline(CameraFrame* frame) {
   std::vector<base::LaneLine>& lane_objects = frame->lane_objects;
   int laneline_num = static_cast<int>(lane_objects.size());

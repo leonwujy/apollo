@@ -26,17 +26,20 @@ namespace apollo {
 namespace perception {
 namespace camera {
 
+//标定服务初始化设置
 struct CalibrationServiceInitOptions : public BaseInitOptions {
   int image_width = 0;
   int image_height = 0;
   double timestamp = 0;
-  std::string calibrator_working_sensor_name = "";
-  std::string calibrator_method = "";
-  std::map<std::string, Eigen::Matrix3f> name_intrinsic_map;
+  std::string calibrator_working_sensor_name = "";  //标定工作传感器名称
+  std::string calibrator_method = "";               //标定方式名称
+  std::map<std::string, Eigen::Matrix3f> name_intrinsic_map; //名字-内参数据对照表
 };
 
+//标定服务设置
 struct CalibrationServiceOptions {};
 
+//标定服务
 class BaseCalibrationService {
  public:
   BaseCalibrationService() = default;
@@ -49,16 +52,19 @@ class BaseCalibrationService {
   virtual bool BuildIndex() = 0;
 
   // @brief query camera to world pose with refinement if any
+  // 如果有的话，查询到相机相对世界的姿态
   virtual bool QueryCameraToWorldPose(Eigen::Matrix4d *pose) const {
     return false;
   }
 
   // @brief query depth on ground plane given pixel coordinate
+  // 查询给定像素坐标在地平面上的深度
   virtual bool QueryDepthOnGroundPlane(int x, int y, double *depth) const {
     return false;
   }
 
   // @brief query 3d point on ground plane given pixel coordinate
+  // 查询给定像素坐标在地平线上的3D点坐标
   virtual bool QueryPoint3dOnGroundPlane(int x, int y,
                                          Eigen::Vector3d *point3d) const {
     return false;
@@ -66,22 +72,27 @@ class BaseCalibrationService {
 
   // @brief query ground plane in camera frame, parameterized as
   // [n^T, d] with n^T*x+d=0
+  // 查询相机坐标系中的地平面，返回结构以[n^T, d]呈现 n^T*x+d=0 
   virtual bool QueryGroundPlaneInCameraFrame(
       Eigen::Vector4d *plane_param) const {
     return false;
   }
 
   // @brief query camera to ground height and pitch angle
+  //查询相机相对地面的高度，以及相机俯仰角
   virtual bool QueryCameraToGroundHeightAndPitchAngle(float *height,
                                                       float *pitch) const {
     return false;
   }
 
+  //查询相机相对地面的高度
   virtual float QueryCameraToGroundHeight() const { return 0.f; }
 
+  //查询相机俯仰角
   virtual float QueryPitchAngle() const { return 0.f; }
 
   // @brief using calibrator to update pitch angle
+  // 用标定信息来更新俯仰角
   virtual void Update(CameraFrame *frame) {
     // do nothing
   }

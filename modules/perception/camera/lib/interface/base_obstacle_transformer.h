@@ -26,6 +26,7 @@ namespace apollo {
 namespace perception {
 namespace camera {
 
+// 目标转换器初始化设置
 struct ObstacleTransformerInitOptions : public BaseInitOptions {};
 
 struct ObstacleTransformerOptions {

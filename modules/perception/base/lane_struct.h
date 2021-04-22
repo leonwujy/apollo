@@ -23,6 +23,7 @@ namespace apollo {
 namespace perception {
 namespace base {
 
+// 线条类型
 enum class LaneLineType {
   WHITE_DASHED = 0,
   WHITE_SOLID,
@@ -31,26 +32,29 @@ enum class LaneLineType {
 };
 
 /// Definition of the position of a lane marking in respect to the ego lane.
+// 定义相对于自车道的车道标识符号
 enum class LaneLinePositionType {
-  CURB_LEFT = -5,
+  CURB_LEFT = -5,      //左路边缘
   FOURTH_LEFT = -4,
-  THIRD_LEFT = -3,
-  ADJACENT_LEFT = -2,  //!< lane marking on the left side next to ego lane
-  EGO_LEFT = -1,       //!< left lane marking of the ego lane
-  EGO_CENTER = 0,      //!< center lane marking of the ego lane, changing lane
-  EGO_RIGHT = 1,       //!< right lane marking of the ego lane
-  ADJACENT_RIGHT = 2,  //!< lane marking on the right side next to ego lane
+  THIRD_LEFT = -3,     
+  ADJACENT_LEFT = -2,  //相邻车道的左边缘线 !< lane marking on the left side next to ego lane
+  EGO_LEFT = -1,       //自车道左边缘线 !< left lane marking of the ego lane
+  EGO_CENTER = 0,      //自车道中心位置 !< center lane marking of the ego lane, changing lane
+  EGO_RIGHT = 1,       //自车道右边缘线 !< right lane marking of the ego lane
+  ADJACENT_RIGHT = 2,  //相邻车道的右边缘线 !< lane marking on the right side next to ego lane
   THIRD_RIGHT = 3,
   FOURTH_RIGHT = 4,
-  CURB_RIGHT = 5,
+  CURB_RIGHT = 5,      //右路边缘
   OTHER = 6,   //!< other types of lane
   UNKNOWN = 7  //!< background
 };
 
 // Definition of the use type of a lane mark in lane adjustment
+// 车道调整中车道标志的使用类型的定义
 enum class LaneLineUseType { REAL = 0, VIRTUAL };
 
 // y = a*x^3 + b*x^2 + c*x + d
+// 车道线的三次曲线
 struct LaneLineCubicCurve {
   float x_start;
   float x_end;
@@ -61,30 +65,32 @@ struct LaneLineCubicCurve {
 };
 
 //  end points for localization
+//  线条的始末端点
 struct EndPoints {
   Point2DF start;
   Point2DF end;
 };
 
+//每条车道线的属性列表
 struct LaneLine {
   LaneLineType type;
   LaneLinePositionType pos_type;
   // @brief image coordinate system
-  LaneLineCubicCurve curve_car_coord;
+  LaneLineCubicCurve curve_car_coord;  //车辆坐标系下的曲线
   // @brief camera coordinate system
-  LaneLineCubicCurve curve_camera_coord;
+  LaneLineCubicCurve curve_camera_coord; //相机坐标系下的曲线
   // @brief image coordinate system
-  LaneLineCubicCurve curve_image_coord;
+  LaneLineCubicCurve curve_image_coord; //图像坐标系下的曲线
   // @brief curve image point set
-  std::vector<Point2DF> curve_image_point_set;
+  std::vector<Point2DF> curve_image_point_set; //图像坐标系下的曲线点集
   // @brief curve camera point set
-  std::vector<Point3DF> curve_camera_point_set;
+  std::vector<Point3DF> curve_camera_point_set; //相机坐标系下的曲线点集
   // @brief curve car coord point set, only on XY plane
-  std::vector<Point2DF> curve_car_coord_point_set;
+  std::vector<Point2DF> curve_car_coord_point_set; //车辆坐标系下的曲线点集
   // @brief image end point set
-  std::vector<EndPoints> image_end_point_set;
+  std::vector<EndPoints> image_end_point_set; //图像坐标系下的线条起点、终点
   // @brief track id
-  int track_id = -1;
+  int track_id = -1; //跟踪编号
   // @brief confidence for lane line
   float confidence = 1.0f;
 

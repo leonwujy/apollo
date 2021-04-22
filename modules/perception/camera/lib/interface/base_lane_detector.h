@@ -28,12 +28,16 @@ namespace perception {
 namespace camera {
 
 struct LaneDetectorInitOptions : public BaseInitOptions {
+  //创建相机模型
   std::shared_ptr<base::BaseCameraModel> base_camera_model = nullptr;
+  //设定GPU编号
   int gpu_id = 0;
 };
 
+//车道线检测配置信息
 struct LaneDetectorOptions {};
 
+//车道线检测器
 class BaseLaneDetector {
  public:
   BaseLaneDetector() = default;

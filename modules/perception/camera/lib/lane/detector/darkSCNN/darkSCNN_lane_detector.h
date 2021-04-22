@@ -33,6 +33,7 @@ namespace apollo {
 namespace perception {
 namespace camera {
 
+//DarkSCNN 车道线检测模型类
 class DarkSCNNLaneDetector : public BaseLaneDetector {
  public:
   DarkSCNNLaneDetector() : BaseLaneDetector() {
