@@ -43,6 +43,7 @@ struct FeatureExtractorInitOptions : public BaseInitOptions {
 struct FeatureExtractorOptions {
   bool normalized = true;
 };
+//特征提取器基类
 class BaseFeatureExtractor {
  public:
   BaseFeatureExtractor() = default;
@@ -50,6 +51,7 @@ class BaseFeatureExtractor {
   virtual bool Init(const FeatureExtractorInitOptions &init_options) = 0;
   // @brief: extract feature for each detected object
   // @param [in/out]: objects with bounding boxes and feature vector.
+  // 提取每个被检测到物体的特征
   virtual bool Extract(const FeatureExtractorOptions &options,
                        CameraFrame *frame) = 0;
   virtual std::string Name() const = 0;
@@ -61,6 +63,7 @@ class BaseFeatureExtractor {
     roi_h_ = h;
   }
 
+  //解码目标框的格式为具体的像素坐标
   void decode_bbox(std::vector<std::shared_ptr<base::Object>> *objects) {
     for (auto obj : *objects) {
       auto &xmin = obj->camera_supplement.box.xmin;
@@ -74,6 +77,7 @@ class BaseFeatureExtractor {
     }
   }
 
+  //编码目标框的格式为[0,1]的归一化形式
   void encode_bbox(std::vector<std::shared_ptr<base::Object>> *objects) {
     for (auto obj : *objects) {
       auto &xmin = obj->camera_supplement.box.xmin;
@@ -94,6 +98,7 @@ class BaseFeatureExtractor {
   int roi_w_ = 0;
   int roi_h_ = 0;
 };
+//注册外部接口？
 PERCEPTION_REGISTER_REGISTERER(BaseFeatureExtractor);
 #define REGISTER_FEATURE_EXTRACTOR(name) \
   PERCEPTION_REGISTER_CLASS(BaseFeatureExtractor, name)

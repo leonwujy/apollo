@@ -31,6 +31,7 @@ namespace apollo {
 namespace perception {
 namespace camera {
 
+//目标类
 struct alignas(16) Target {
  public:
   // EIGEN_MAKE_ALIGNED_OPERATOR_NEW

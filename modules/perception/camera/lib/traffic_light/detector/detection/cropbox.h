@@ -28,6 +28,7 @@ class IGetBox {
                           base::RectI *crop_box) = 0;
 };
 
+// 裁剪框
 class CropBox : public IGetBox {
  public:
   CropBox(float crop_scale, int min_crop_size);
@@ -43,6 +44,7 @@ class CropBox : public IGetBox {
   int min_crop_size_ = 270;
 };
 
+// 全图裁剪box？
 class CropBoxWholeImage : public IGetBox {
  public:
   virtual void getCropBox(const int width, const int height,

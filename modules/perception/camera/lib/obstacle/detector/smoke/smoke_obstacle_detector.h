@@ -38,6 +38,7 @@ namespace apollo {
 namespace perception {
 namespace camera {
 
+//Smoke物体检测类
 class SmokeObstacleDetector : public BaseObstacleDetector {
  public:
   SmokeObstacleDetector() : BaseObstacleDetector() {}
@@ -55,6 +56,7 @@ class SmokeObstacleDetector : public BaseObstacleDetector {
   std::string Name() const override { return "SmokeObstacleDetector"; }
 
  protected:
+  //网络相关函数
   void LoadInputShape(const smoke::ModelParam &model_param);
   void LoadParam(const smoke::SmokeParam &smoke_param);
   bool InitNet(const smoke::SmokeParam &smoke_param,
@@ -63,11 +65,11 @@ class SmokeObstacleDetector : public BaseObstacleDetector {
   bool InitFeatureExtractor(const std::string &root_dir);
 
  private:
-  std::shared_ptr<BaseFeatureExtractor> feature_extractor_;
-  smoke::SmokeParam smoke_param_;
-  std::shared_ptr<base::BaseCameraModel> base_camera_model_ = nullptr;
-  std::shared_ptr<inference::Inference> inference_;
-  std::vector<base::ObjectSubType> types_;
+  std::shared_ptr<BaseFeatureExtractor> feature_extractor_; //特征提取器
+  smoke::SmokeParam smoke_param_; //模型参数
+  std::shared_ptr<base::BaseCameraModel> base_camera_model_ = nullptr; //基础模型
+  std::shared_ptr<inference::Inference> inference_; //模型推理
+  std::vector<base::ObjectSubType> types_; //目标类型
   std::vector<float> expands_;
   std::vector<float> anchors_;
 

@@ -22,17 +22,19 @@ namespace apollo {
 namespace perception {
 namespace camera {
 
+//目标后处理参数
 void ObjPostProcessorParams::set_default() {
-  max_nr_iter = 5;
-  sampling_ratio_low = 0.1f;
-  weight_iou = 3.0f;
-  learning_r = 0.2f;
-  learning_r_decay = 0.9f;
-  dist_far = 15.0f;
-  shrink_ratio_iou = 0.9f;
-  iou_good = 0.5f;
+  max_nr_iter = 5;             //最大nr迭代次数？
+  sampling_ratio_low = 0.1f;   //最低采样率
+  weight_iou = 3.0f;           //iou权重
+  learning_r = 0.2f;           //学习率
+  learning_r_decay = 0.9f;     //学习率衰减
+  dist_far = 15.0f;            //远距离？？？
+  shrink_ratio_iou = 0.9f;     //iou收缩率
+  iou_good = 0.5f;             //iou有效阈值？
 }
 
+//ground意义？
 bool ObjPostProcessor::PostProcessObjWithGround(
     const ObjPostProcessorOptions &options, float center[3], float hwl[3],
     float *ry) {
@@ -56,6 +58,7 @@ bool ObjPostProcessor::PostProcessObjWithGround(
   return adjust_soft || adjust_hard;
 }
 
+//Dispmap意义？
 bool ObjPostProcessor::PostProcessObjWithDispmap(
     const ObjPostProcessorOptions &options, float center[3], float hwl[3],
     float *ry) {

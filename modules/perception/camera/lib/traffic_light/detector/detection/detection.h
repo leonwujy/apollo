@@ -31,6 +31,7 @@ namespace apollo {
 namespace perception {
 namespace camera {
 
+//交通灯检测
 class TrafficLightDetection : public BaseTrafficLightDetector {
  public:
   TrafficLightDetection() {

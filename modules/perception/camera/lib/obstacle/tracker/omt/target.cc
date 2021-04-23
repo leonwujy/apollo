@@ -27,11 +27,12 @@ namespace apollo {
 namespace perception {
 namespace camera {
 
-int Target::global_track_id = 0;
-int Target::Size() const { return static_cast<int>(tracked_objects.size()); }
+int Target::global_track_id = 0; //全局跟踪id号
+int Target::Size() const { return static_cast<int>(tracked_objects.size()); } //跟踪数量
 
 void Target::Clear() { tracked_objects.clear(); }
 
+//获取跟踪对象
 TrackObjectPtr Target::operator[](int index) const { return get_object(index); }
 TrackObjectPtr Target::get_object(int index) const {
   CHECK_GT(static_cast<int>(tracked_objects.size()), 0);
@@ -40,12 +41,15 @@ TrackObjectPtr Target::get_object(int index) const {
   return tracked_objects[(index + tracked_objects.size()) %
                          tracked_objects.size()];
 }
+//添加跟踪对象
 void Target::Add(TrackObjectPtr object) {
+  //如果跟踪列表为空
   if (tracked_objects.empty()) {
     start_ts = object->timestamp;
     id = Target::global_track_id++;
     type = object->object->sub_type;
   }
+  //更新相关信息
   object->object->track_id = id;
   object->object->tracking_time = object->timestamp - start_ts;
   object->object->latest_tracked_time = object->timestamp;
@@ -53,6 +57,7 @@ void Target::Add(TrackObjectPtr object) {
   lost_age = 0;
   tracked_objects.push_back(object);
 }
+//移除过老的目标
 void Target::RemoveOld(int frame_id) {
   size_t index = 0;
   while (index < tracked_objects.size() &&
@@ -62,15 +67,18 @@ void Target::RemoveOld(int frame_id) {
   tracked_objects.erase(tracked_objects.begin(),
                         tracked_objects.begin() + index);
 }
+//目标初始化
 void Target::Init(const omt::TargetParam &param) {
   target_param_ = param;
   id = -1;
   lost_age = 0;
 
+  //设置世界坐标中的物体尺寸信息
   world_lwh.SetWindow(param.world_lhw_history());
   world_lwh_for_unmovable.SetWindow(param.world_lhw_history());
   image_wh.SetAlpha(param.image_wh_update_rate());
   // TODO(gaohan)  should update variance when predict and update
+  //计算中心位置的均值方差
   image_center.variance_ *= target_param_.image_center().init_variance();
   image_center.measure_noise_ *=
       target_param_.image_center().measure_variance();
@@ -86,22 +94,27 @@ void Target::Init(const omt::TargetParam &param) {
   world_velocity.SetWindow(param.mean_filter_window());
 
   // record history state after kalman filter
+  // 记录卡尔曼滤波后的状态信息
   history_world_states_.set_capacity(param.world_state_history());
 
   // record orientation of displacement
+  // 记录位移方向
   displacement_theta.SetWindow(param.mean_filter_window());
   direction.SetAlpha(param.direction_filter_ratio());
   // Init constant position Kalman Filter
+  // 初始化恒定位置卡尔曼滤波器
   world_center_const.covariance_.setIdentity();
   world_center_const.measure_noise_.setIdentity();
   world_center_const.process_noise_.setIdentity();
   world_center_const.covariance_ *=
       target_param_.world_center().init_variance();
   // Init object template
+  // 初始化目标模板
   object_template_manager_ = ObjectTemplateManager::Instance();
 }
 Target::Target(const omt::TargetParam &param) { Init(param); }
 
+// 预测目标新的位置
 void Target::Predict(CameraFrame *frame) {
   auto delta_t =
       static_cast<float>(frame->timestamp - latest_object->timestamp);
@@ -127,6 +140,7 @@ void Target::Predict(CameraFrame *frame) {
   world_center_const.Predict(delta_t);
 }
 
+//更新2D坐标信息
 void Target::Update2D(CameraFrame *frame) {
   // measurements
   auto obj = latest_object->object;
@@ -135,6 +149,7 @@ void Target::Update2D(CameraFrame *frame) {
   base::RectF rect(latest_object->projected_box);
   base::Point2DF center = rect.Center();
 
+  //更新
   if (!isLost()) {
     Eigen::Vector2d measurement;
     measurement << rect.width, rect.height;
@@ -153,14 +168,16 @@ void Target::Update2D(CameraFrame *frame) {
     rect.width = static_cast<float>(shape(0));
     rect.height = static_cast<float>(shape(1));
     rect.SetCenter(center);
-    RefineBox(rect, width, height, &rect);
+    RefineBox(rect, width, height, &rect); //修正box，防止超出图像
     latest_object->projected_box = rect;
   }
 }
 
+// 更新3D信息
 void Target::Update3D(CameraFrame *frame) {
   auto object = latest_object->object;
   if (!isLost()) {
+    //更新目标朝向信息
     Eigen::Vector2d z;
     z << std::sin(object->theta * 2), std::cos(object->theta * 2);
     direction.AddMeasure(z);
@@ -172,6 +189,7 @@ void Target::Update3D(CameraFrame *frame) {
     object->direction[1] = static_cast<float>(sin(object->theta));
     object->direction[2] = 0;
 
+    //更新目标中心信息
     z << object->center(0), object->center(1);
     if (object->type == base::ObjectType::UNKNOWN_UNMOVABLE) {
       world_center_for_unmovable.AddMeasure(z);
@@ -269,6 +287,7 @@ void Target::Update3D(CameraFrame *frame) {
   if (object->type != base::ObjectType::UNKNOWN_UNMOVABLE &&
       target_param_.clapping_velocity()) {
     // check displacement orientation
+    // 校对位移方向
     bool stable_moving = false;
     double avg_vel_norm = world_velocity.get_state().norm();
     if (avg_vel_norm > target_param_.stable_moving_speed()) {
@@ -305,6 +324,7 @@ void Target::Update3D(CameraFrame *frame) {
   ADEBUG << "obj_speed--id: " << id << " " << object->velocity.head(2).norm();
 }
 
+//更新类型
 void Target::UpdateType(CameraFrame *frame) {
   auto object = latest_object->object;
   if (!isLost()) {

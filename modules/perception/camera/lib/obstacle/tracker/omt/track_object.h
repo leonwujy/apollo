@@ -27,9 +27,9 @@ namespace camera {
 struct alignas(16) TrackObject {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   PatchIndicator indicator;
-  double timestamp;
-  base::BBox2DF projected_box;
-  base::ObjectPtr object;
+  double timestamp; //时间戳
+  base::BBox2DF projected_box; //目标框
+  base::ObjectPtr object;      //目标空间及类型属性
 };
 typedef std::shared_ptr<TrackObject> TrackObjectPtr;
 typedef std::vector<TrackObjectPtr> TrackObjectPtrs;

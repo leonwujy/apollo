@@ -32,6 +32,7 @@ namespace camera {
 
 using cyber::common::GetAbsolutePath;
 
+//初始化
 bool TrafficLightDetection::Init(
     const camera::TrafficLightDetectorInitOptions &options) {
   std::string proto_path = GetAbsolutePath(options.root_dir, options.conf_file);
@@ -215,6 +216,7 @@ bool TrafficLightDetection::Inference(
     }
 
     // inference
+    // 执行检测
     cudaDeviceSynchronize();
     rt_net_->Infer();
     cudaDeviceSynchronize();
@@ -287,6 +289,7 @@ bool TrafficLightDetection::Detect(const TrafficLightDetectorOptions &options,
   return true;
 }
 
+//选择输出box
 bool TrafficLightDetection::SelectOutputBoxes(
     const std::vector<base::RectI> &crop_box_list,
     const std::vector<float> &resize_scale_list_col,

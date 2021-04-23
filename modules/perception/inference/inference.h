@@ -33,6 +33,7 @@ typedef std::map<std::string,
                  std::shared_ptr<apollo::perception::base::Blob<float>>>
     BlobMap;
 
+//模型推理接口
 class Inference {
  public:
   virtual void Infer() = 0;

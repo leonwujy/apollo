@@ -25,22 +25,25 @@ namespace apollo {
 namespace perception {
 namespace camera {
 
+//滞回窗口
 struct HystereticWindow {
   int hysteretic_count = 0;
   base::TLColor hysteretic_color = base::TLColor::TL_UNKNOWN_COLOR;
 };
 
+//语义表
 struct SemanticTable {
   double time_stamp = 0.0;
-  double last_bright_time_stamp = 0.0;
-  double last_dark_time_stamp = 0.0;
+  double last_bright_time_stamp = 0.0;   //最近亮灯的时刻
+  double last_dark_time_stamp = 0.0;     //最近灭灯的时刻
   bool blink = false;
-  std::string semantic;
-  std::vector<int> light_ids;
-  base::TLColor color;
-  HystereticWindow hystertic_window;
+  std::string semantic;       //语义
+  std::vector<int> light_ids; //交通灯序号
+  base::TLColor color;        //交通灯颜色
+  HystereticWindow hystertic_window;  //回滞窗大小
 };
 
+//语义修正器
 class SemanticReviser : public BaseTrafficLightTracker {
  public:
   SemanticReviser() {}
@@ -51,13 +54,17 @@ class SemanticReviser : public BaseTrafficLightTracker {
 
   bool Track(const TrafficLightTrackerOptions &options,
              CameraFrame *frame) override;
+  //通过语义修正
   base::TLColor ReviseBySemantic(SemanticTable semantic_table,
                                  std::vector<base::TrafficLightPtr> *lights);
+  //通过时间序列修正
   void ReviseByTimeSeries(double time_stamp, SemanticTable semantic_table,
                           std::vector<base::TrafficLightPtr> *lights);
+  //更新历史和交通灯
   void UpdateHistoryAndLights(const SemanticTable &cur,
                               std::vector<base::TrafficLightPtr> *lights,
                               std::vector<SemanticTable>::iterator *history);
+  //修正交通灯
   void ReviseLights(std::vector<base::TrafficLightPtr> *lights,
                     const std::vector<int> &light_ids, base::TLColor dst_color);
 
@@ -68,10 +75,10 @@ class SemanticReviser : public BaseTrafficLightTracker {
 
  private:
   traffic_light::tracker::SemanticReviseParam semantic_param_;
-  float revise_time_s_ = 1.5f;
-  float blink_threshold_s_ = 0.4f;
-  float non_blink_threshold_s_ = 0.8f;
-  int hysteretic_threshold_ = 1;
+  float revise_time_s_ = 1.5f;           //修订时间(秒)
+  float blink_threshold_s_ = 0.4f;       //闪烁阈值(秒)
+  float non_blink_threshold_s_ = 0.8f;   //无闪烁阈值(秒)
+  int hysteretic_threshold_ = 1;         //回滞阈值
   std::vector<SemanticTable> history_semantic_;
 };
 

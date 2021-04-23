@@ -24,15 +24,18 @@ namespace camera {
 
 bool SmokeObjectMaintainer::Add(int idx, base::ObjectPtr obj) {
   auto obj_it = assigned_index_.find(idx);
+  // 创建新的目标对象
   if (obj_it == assigned_index_.end()) {
     assigned_index_[idx] = obj;
     return true;
   }
 
+  //获取到该编号上的目标对象
   auto prev_obj = obj_it->second;
   const int curr_type = static_cast<int>(obj->sub_type);
   const int prev_type = static_cast<int>(prev_obj->sub_type);
 
+  //如果新的分类概率大于旧的分类概率，则更新物体类别类型
   if (obj->sub_type_probs[curr_type] > prev_obj->sub_type_probs[prev_type]) {
     *prev_obj = *obj;
   }

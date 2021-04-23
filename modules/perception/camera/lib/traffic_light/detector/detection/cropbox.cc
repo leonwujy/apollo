@@ -29,6 +29,7 @@ void CropBox::getCropBox(const int width, const int height,
   int rows = height;
   int cols = width;
 
+  //判断裁剪框是否有效
   if (OutOfValidRegion(light->region.projection_roi, width, height) ||
       light->region.projection_roi.Area() <= 0) {
     crop_box->x = 0;
@@ -51,11 +52,13 @@ void CropBox::getCropBox(const int width, const int height,
                                          light->region.projection_roi.width,
                                          light->region.projection_roi.height)));
 
+  //找到最小裁剪边长
   resize = std::max(resize, min_crop_size_);
   resize = std::min(resize, width);
   resize = std::min(resize, height);
 
   // clamp
+  // 锁定为一个正方形区域
   xl = center_x - resize / 2 + 1;
   xl = (xl < 0) ? 0 : xl;
   yt = center_y - resize / 2 + 1;

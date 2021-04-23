@@ -36,6 +36,7 @@ struct ObstacleDetectorInitOptions : public BaseInitOptions {
 
 struct ObstacleDetectorOptions {};
 
+//物体检测的基础类
 class BaseObstacleDetector {
  public:
   BaseObstacleDetector() = default;

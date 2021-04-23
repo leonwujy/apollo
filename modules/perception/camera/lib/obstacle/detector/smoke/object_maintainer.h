@@ -24,13 +24,14 @@ namespace apollo {
 namespace perception {
 namespace camera {
 
+//smoke检测模型主类
 class SmokeObjectMaintainer {
  public:
   SmokeObjectMaintainer() {}
   ~SmokeObjectMaintainer() {}
-  bool Add(int idx, base::ObjectPtr obj);
+  bool Add(int idx, base::ObjectPtr obj); //添加目标及其序号
  protected:
-  std::map<int, base::ObjectPtr> assigned_index_;
+  std::map<int, base::ObjectPtr> assigned_index_; //序号和对象的映射表
 };
 
 }  // namespace camera
