@@ -33,6 +33,7 @@ typedef pcl::PointCloud<CPoint> CPointCloud;
 typedef pcl::PointCloud<CPoint>::Ptr CPointCloudPtr;
 typedef pcl::PointCloud<CPoint>::ConstPtr CPointCloudConstPtr;
 
+//PCL点云点格式 x/y/z/强度/时间戳
 struct PCLPointXYZIT {
   float x;
   float y;
@@ -42,6 +43,7 @@ struct PCLPointXYZIT {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 } EIGEN_ALIGN16;
 
+//PCL点云点格式 x/y/z/标签
 struct PCLPointXYZL {
   float x;
   float y;
@@ -50,6 +52,7 @@ struct PCLPointXYZL {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 } EIGEN_ALIGN16;
 
+//读取PCD文件
 inline bool LoadPCLPCD(const std::string& file_path,
                        base::PointFCloud* cloud_out) {
   pcl::PointCloud<PCLPointXYZIT> org_cloud;
@@ -92,6 +95,7 @@ inline bool LoadPCLPCD(const std::string& file_path,
 // }
 //
 
+//将格式转换为PCL的x/y/z/强度格式
 template <typename PointT>
 inline void TransformToPCLXYZI(
     const base::AttributePointCloud<PointT>& org_cloud,
@@ -107,6 +111,7 @@ inline void TransformToPCLXYZI(
   }
 }
 
+//从PCL的x/y/z/强度格式转换成
 inline void TransformFromPCLXYZI(
     const pcl::PointCloud<pcl::PointXYZI>::Ptr& org_cloud_ptr,
     const base::PointFCloudPtr& out_cloud_ptr) {
@@ -121,6 +126,7 @@ inline void TransformFromPCLXYZI(
   }
 }
 
+// 通过体素网格的方式降采样点云
 inline void DownSampleCloudByVoxelGrid(
     const pcl::PointCloud<pcl::PointXYZI>::Ptr& cloud_ptr,
     const pcl::PointCloud<pcl::PointXYZI>::Ptr& filtered_cloud_ptr,

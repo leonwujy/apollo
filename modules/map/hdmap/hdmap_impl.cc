@@ -153,7 +153,9 @@ int HDMapImpl::LoadMapFromProto(const Map& map_proto) {
 }
 
 LaneInfoConstPtr HDMapImpl::GetLaneById(const Id& id) const {
+  //通过hashmap查询对应元素
   LaneTable::const_iterator it = lane_table_.find(id.id());
+  //返回对应元素内容指针
   return it != lane_table_.end() ? it->second : nullptr;
 }
 
@@ -859,6 +861,7 @@ int HDMapImpl::GetRoi(const apollo::common::PointENU& point, double radius,
   return 0;
 }
 
+// 获取前方车道上最近的信号标
 int HDMapImpl::GetForwardNearestSignalsOnLane(
     const apollo::common::PointENU& point, const double distance,
     std::vector<SignalInfoConstPtr>* signals) const {
@@ -1051,6 +1054,7 @@ int HDMapImpl::GetStopSignAssociatedLanes(
   return 0;
 }
 
+// 获取本地地图
 int HDMapImpl::GetLocalMap(const apollo::common::PointENU& point,
                            const std::pair<double, double>& range,
                            Map* local_map) const {

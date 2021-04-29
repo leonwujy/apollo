@@ -79,6 +79,7 @@ PNCJunctionInfoConstPtr HDMap::GetPNCJunctionById(const Id& id) const {
   return impl_.GetPNCJunctionById(id);
 }
 
+//下方函数用于获取相关的道路信息
 int HDMap::GetLanes(const apollo::common::PointENU& point, double distance,
                     std::vector<LaneInfoConstPtr>* lanes) const {
   return impl_.GetLanes(point, distance, lanes);

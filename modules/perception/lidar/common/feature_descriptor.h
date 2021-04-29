@@ -31,8 +31,10 @@ class FeatureDescriptor {
   FeatureDescriptor() : cloud_(nullptr) {}
   ~FeatureDescriptor() = default;
 
+  // 设置点云
   void SetCloud(base::PointFCloud* cloud) { cloud_ = cloud; }
 
+  //计算直方图
   void ComputeHistogram(int bin_size, float* feature) {
     GetMinMaxCenter();
     int xstep = bin_size;
@@ -69,6 +71,7 @@ class FeatureDescriptor {
   }
 
  private:
+  //获得最小最大中心
   void GetMinMaxCenter() {
     float xsum = 0.0f;
     float ysum = 0.0f;

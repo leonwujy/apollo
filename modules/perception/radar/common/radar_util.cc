@@ -19,12 +19,14 @@ namespace apollo {
 namespace perception {
 namespace radar {
 
+//虚拟雷达多边形
 void MockRadarPolygon(base::ObjectPtr object) {
   double theta = object->theta;
   const auto& center = object->center;
   double length = object->size(0);
   double width = object->size(1);
 
+  // 旋转矩阵
   Eigen::Matrix2d rotation;
   rotation << cos(theta), -sin(theta), sin(theta), cos(theta);
 
@@ -34,13 +36,16 @@ void MockRadarPolygon(base::ObjectPtr object) {
   object->polygon.resize(4);
 
   // - -
+  //物体的中心点作为本地坐标的原点
   local_poly(0) = -0.5 * length;
   local_poly(1) = -0.5 * width;
+  //将中心点旋转平移到世界坐标系下
   world_poly = rotation * local_poly;
   object->polygon[0].x = center(0) + world_poly(0);
   object->polygon[0].y = center(1) + world_poly(1);
   object->polygon[0].z = center(2);
 
+  //对物体的三个边界点进行映射
   // - +
   local_poly(1) = +0.5 * width;
   world_poly = rotation * local_poly;

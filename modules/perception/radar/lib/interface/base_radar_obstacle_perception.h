@@ -62,12 +62,15 @@
 namespace apollo {
 namespace perception {
 namespace radar {
+
+//毫米波雷达感知设置
 struct RadarPerceptionOptions {
-  DetectorOptions detector_options;
-  RoiFilterOptions roi_filter_options;
-  TrackerOptions track_options;
+  DetectorOptions detector_options;        //检测设置
+  RoiFilterOptions roi_filter_options;     //区域范围集合设置
+  TrackerOptions track_options;            //跟踪设置
   std::string sensor_name;
 };
+//雷达的障碍物预测基类
 class BaseRadarObstaclePerception {
  public:
   BaseRadarObstaclePerception() = default;

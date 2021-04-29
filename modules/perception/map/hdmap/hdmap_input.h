@@ -31,21 +31,27 @@ namespace apollo {
 namespace perception {
 namespace map {
 
+// 高清地图输入
 class HDMapInput {
  public:
   // thread safe
+  // 线程安全
   bool Init();
   bool Reset();
+  // 获得ROI区域高清地图的结构体
   bool GetRoiHDMapStruct(const base::PointD& pointd, const double distance,
                          std::shared_ptr<base::HdmapStruct> hdmap_struct_prt);
+  // 获取最近车道线的方向
   bool GetNearestLaneDirection(const base::PointD& pointd,
                                Eigen::Vector3d* lane_direction);
+
+  // 获取信号
   bool GetSignals(const Eigen::Vector3d& pointd, double forward_distance,
                   std::vector<apollo::hdmap::Signal>* signals);
 
  private:
-  bool InitHDMap();
-  bool InitInternal();
+  bool InitHDMap();     //初始化高清地图
+  bool InitInternal();  //内部初始化
 
   void MergeBoundaryJunction(
       const std::vector<apollo::hdmap::RoadRoiPtr>& boundary,
@@ -55,24 +61,24 @@ class HDMapInput {
           road_polygons_ptr,
       apollo::common::EigenVector<base::PointCloud<base::PointD>>*
           junction_polygons_ptr);
-
+  //获取经过连接过滤的道路边界
   bool GetRoadBoundaryFilteredByJunctions(
       const apollo::common::EigenVector<base::RoadBoundary>& road_boundaries,
       const apollo::common::EigenVector<base::PointCloud<base::PointD>>&
           junctions,
       apollo::common::EigenVector<base::RoadBoundary>* flt_road_boundaries_ptr);
-
+  //降采样点云
   void DownsamplePoints(const base::PointDCloudPtr& raw_cloud_ptr,
                         base::PointCloud<base::PointD>* polygon_ptr,
                         size_t min_points_num_for_sample = 15) const;
-
+  //分离的边界框
   void SplitBoundary(
       const base::PointCloud<base::PointD>& boundary_line,
       const apollo::common::EigenVector<base::PointCloud<base::PointD>>&
           junctions,
       apollo::common::EigenVector<base::PointCloud<base::PointD>>*
           boundary_line_vec_ptr);
-
+  //从HD地图获取信号
   bool GetSignalsFromHDMap(const Eigen::Vector3d& pointd,
                            double forward_distance,
                            std::vector<apollo::hdmap::Signal>* signals);

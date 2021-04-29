@@ -260,6 +260,7 @@ class PointCloud {
 
 // @brief Point cloud class split points and attributes storage
 // for fast traversing
+// 
 template <class PointT>
 class AttributePointCloud : public PointCloud<PointT> {
  public:
@@ -273,6 +274,7 @@ class AttributePointCloud : public PointCloud<PointT> {
   AttributePointCloud() = default;
 
   // @brief construct from input point cloud and specified indices
+  // 从输入点云和指定的索引构造
   AttributePointCloud(const AttributePointCloud<PointT>& pc,
                       const PointIndices& indices) {
     CopyPointCloud(pc, indices);

@@ -23,6 +23,7 @@ namespace apollo {
 namespace perception {
 namespace lidar {
 
+//点云遮罩？
 class CloudMask {
  public:
   CloudMask() = default;
@@ -37,10 +38,12 @@ class CloudMask {
 
   // @brief: fill mask with given value
   // @param [in]: value
+  // 以指定数值进行填充
   inline void Fill(int value) { std::fill(mask_.begin(), mask_.end(), value); }
 
   // @brief: get mask data
   // @return: mask data
+  // 获得mask数据
   inline const std::vector<int>& mask() const { return mask_; }
 
   // @brief: overloading [] to get mask element
@@ -67,6 +70,7 @@ class CloudMask {
   // @brief: get valid (positive) indices count
   // @param [in]: indices
   // @return: count
+  //获得有效对象的序号
   template <typename IntegerType>
   size_t ValidIndicesCount(const std::vector<IntegerType>& indices) const;
 

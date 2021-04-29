@@ -24,6 +24,7 @@ const int MAX_RADAR_IDX = 2147483647;
 const double CONTI_ARS_INTERVAL = 0.074;
 const double MIN_PROBEXIST = 0.08;
 
+//物体类型
 enum ContiObjectType {
   CONTI_POINT = 0,
   CONTI_CAR = 1,

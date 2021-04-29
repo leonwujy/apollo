@@ -24,13 +24,15 @@
 namespace apollo {
 namespace perception {
 namespace radar {
+  
+//毫米波雷达障碍物检测
 class RadarObstaclePerception : public BaseRadarObstaclePerception {
  public:
   RadarObstaclePerception() {}
   virtual ~RadarObstaclePerception() {}
 
   bool Init(const std::string& pipeline_name) override;
-
+  //感知
   bool Perceive(const drivers::ContiRadar& corrected_obstacles,
                 const RadarPerceptionOptions& options,
                 std::vector<base::ObjectPtr>* objects) override;

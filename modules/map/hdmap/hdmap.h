@@ -87,6 +87,7 @@ class HDMap {
    * @param lanes store all lanes in target range
    * @return 0:success, otherwise failed
    */
+  // 
   int GetLanes(const apollo::common::PointENU& point, double distance,
                std::vector<LaneInfoConstPtr>* lanes) const;
   /**

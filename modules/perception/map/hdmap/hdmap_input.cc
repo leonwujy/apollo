@@ -83,17 +83,20 @@ bool HDMapInput::InitHDMap() {
   }
 
   // TO DO: Decide which map to use
+  // 决定使用哪一个地图
   // Option 1: Use global hdmap_ = apollo::hdmap::HDMapUtil::BaseMapPtr();
   // hdmap_ = apollo::hdmap::HDMapUtil::BaseMapPtr();
 
   // Option2: Load own map with different hdmap_sample_step_
   // Load hdmap path from global_flagfile.txt
+  // 从文件中读取hdmap的路径
   hdmap_file_ = absl::StrCat(FLAGS_map_dir, "/base_map.bin");
   AINFO << "hdmap_file_: " << hdmap_file_;
   if (!apollo::cyber::common::PathExists(hdmap_file_)) {
     AERROR << "Failed to find hadmap file: " << hdmap_file_;
     return false;
   }
+  //从文件中读取地图
   if (hdmap_->LoadMapFromFile(hdmap_file_) != 0) {
     AERROR << "Failed to load hadmap file: " << hdmap_file_;
     return false;
